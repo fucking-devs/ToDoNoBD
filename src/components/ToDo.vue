@@ -27,4 +27,6 @@ const removeTask = (index: number) => {
   </div>
 </template>
 
-<style></style>
+<style>
+
+</style>
