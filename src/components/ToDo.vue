@@ -1,25 +1,35 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue'
 
-const tasks = ref([]);
-const newTask = ref('');
+interface Task {
+  id: number
+  name: string
+}
+
+const tasks = ref<Task[]>([])
+const newTask = ref('')
 
 const addTask = () => {
-  if (newTask.value.trim()) {
-    const taskId = tasks.value.length + 1;
-    tasks.value.push({ id: taskId, name: newTask.value });
-    newTask.value = '';
-  }
-};
+  const taskId = tasks.value.length + 1
+  const data = { id: taskId, name: newTask.value.trim() }
+  tasks.value.unshift(data)
+  localStorage.tasks = JSON.stringify(tasks.value)
+  newTask.value = ''
+}
 
-const removeTask = (index) => {
-  tasks.value.splice(index, 1);
-};
+const updateTask = (id: number) => {
+  localStorage.tasks = JSON.stringify(tasks.value)
+}
+
+const removeTask = (id: number) => {
+  tasks.value.splice(tasks.value.findIndex(task => task.id === id), 1)
+  localStorage.tasks = JSON.stringify(tasks.value)
+}
 </script>
 <template>
   <div class="task-app">
     <h2>Задачи</h2>
-    
+
     <div class="input-container">
       <input v-model="newTask" placeholder="Добавить задачу" @keyup.enter="addTask" />
       <button @click="addTask">Добавить</button>
@@ -27,8 +37,8 @@ const removeTask = (index) => {
 
     <ul class="task-list">
       <li v-for="(task, index) in tasks" :key="task.id" class="task-item">
-        <input v-model="task.name" class="task-input" />
-        <button @click="removeTask(index)" class="remove-button">Удалить</button>
+        <input v-model="task.name" class="task-input" @change="updateTask(task.id)"/>
+        <button @click="removeTask(task.id)" class="remove-button">Удалить</button>
       </li>
     </ul>
   </div>
@@ -55,13 +65,13 @@ h2 {
 
 .input-container {
   display: flex;
-  flex-direction: column; 
-  gap: 10px; 
+  flex-direction: column;
+  gap: 10px;
 }
 
 @media (min-width: 600px) {
   .input-container {
-    flex-direction: row; 
+    flex-direction: row;
     justify-content: space-between;
   }
 }
@@ -70,13 +80,13 @@ input {
   padding: 12px;
   border: 1px solid #000;
   border-radius: 4px;
-  width: 100%; 
+  width: 100%;
   transition: border-color 0.3s;
 }
 
 @media (min-width: 600px) {
   input {
-    width: 70%; 
+    width: 70%;
   }
 }
 
