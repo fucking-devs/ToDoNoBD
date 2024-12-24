@@ -3,8 +3,7 @@ import { onMounted, ref } from 'vue'
 interface Task {
   id: number
   title: string
-  status: 'todo' | 'in-progress' | 'complete'
-}
+  status: 'todo' | 'in-progress' | 'complete'}
 const tasks = ref<Task[]>([])
 const newTask = ref('')
 const addTask = (status: 'todo' | 'in-progress' | 'complete') => {
